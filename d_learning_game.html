@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D Programming Quest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .title {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 20px;
+            height: 30px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .quests-section, .achievements-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .quest-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .quest-item:hover {
+            transform: translateX(5px);
+        }
+
+        .quest-item.completed {
+            opacity: 0.6;
+            border-left-color: #4caf50;
+        }
+
+        .quest-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .quest-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .quest-reward {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .quest-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .quest-button:hover {
+            background: #764ba2;
+        }
+
+        .quest-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .achievement-item {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .achievement-item.locked {
+            background: #e0e0e0;
+            color: #999;
+        }
+
+        .achievement-icon {
+            font-size: 2em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .achievement-desc {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 1.8em;
+            }
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 1000;
+            animation: popup 0.5s ease;
+        }
+
+        @keyframes popup {
+            from {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎮 D Programming Quest <span class="level-badge" id="levelBadge">Level 1</span></h1>
+            <p class="subtitle">Master the D programming language through epic quests and achievements!</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="xpValue">0</div>
+                <div class="stat-label">Experience Points</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="xpProgress" style="width: 0%">0%</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="questsComplete">0</div>
+                <div class="stat-label">Quests Complete</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="achievementsUnlocked">0</div>
+                <div class="stat-label">Achievements</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="streakValue">0</div>
+                <div class="stat-label">Day Streak 🔥</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="quests-section">
+                <h2 class="section-title">📜 Active Quests</h2>
+                <div id="questsList"></div>
+            </div>
+
+            <div class="achievements-section">
+                <h2 class="section-title">🏆 Achievements</h2>
+                <div id="achievementsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay hidden"></div>
+    <div id="celebration" class="celebration hidden">
+        <h2 id="celebrationTitle" style="color: #667eea; margin-bottom: 15px;"></h2>
+        <p id="celebrationText" style="color: #666; margin-bottom: 20px;"></p>
+        <button onclick="closeCelebration()" class="quest-button">Continue Your Journey!</button>
+    </div>
+
+    <script>
+        const quests = [
+            // Beginner Quests
+            { id: 1, title: "Hello, D World!", description: "Write and compile your first D program", xp: 100, level: 1 },
+            { id: 2, title: "Variable Warrior", description: "Master D's variable types and declarations", xp: 150, level: 1 },
+            { id: 3, title: "Function Explorer", description: "Create functions with different signatures", xp: 200, level: 1 },
+            { id: 4, title: "Array Adventurer", description: "Work with static and dynamic arrays", xp: 250, level: 2 },
+            { id: 5, title: "Loop Master", description: "Implement foreach, for, and while loops", xp: 200, level: 2 },
+            
+            // Intermediate Quests
+            { id: 6, title: "Struct Architect", description: "Design and implement custom structs", xp: 300, level: 3 },
+            { id: 7, title: "Class Constructor", description: "Build classes with inheritance", xp: 350, level: 3 },
+            { id: 8, title: "Template Wizard", description: "Create generic code with templates", xp: 400, level: 4 },
+            { id: 9, title: "Range Ranger", description: "Master D's range-based programming", xp: 350, level: 4 },
+            { id: 10, title: "UFCS Champion", description: "Use Uniform Function Call Syntax effectively", xp: 300, level: 4 },
+            
+            // Advanced Quests
+            { id: 11, title: "CTFE Sorcerer", description: "Leverage Compile-Time Function Execution", xp: 500, level: 5 },
+            { id: 12, title: "Mixin Master", description: "Use mixins for code generation", xp: 450, level: 5 },
+            { id: 13, title: "Concurrency Hero", description: "Implement parallel and concurrent programs", xp: 600, level: 6 },
+            { id: 14, title: "Memory Sage", description: "Master memory management and @nogc code", xp: 550, level: 6 },
+            { id: 15, title: "Metaprogramming Legend", description: "Create advanced compile-time metaprograms", xp: 700, level: 7 }
+        ];
+
+        const achievements = [
+            { id: 1, name: "First Steps", description: "Complete your first quest", icon: "🎯", requirement: 1 },
+            { id: 2, name: "Getting Started", description: "Reach Level 2", icon: "⭐", requirement: 2 },
+            { id: 3, name: "Quest Hunter", description: "Complete 5 quests", icon: "🏹", requirement: 5 },
+            { id: 4, name: "Intermediate Coder", description: "Reach Level 3", icon: "💎", requirement: 3 },
+            { id: 5, name: "Dedicated Learner", description: "Complete 10 quests", icon: "📚", requirement: 10 },
+            { id: 6, name: "Advanced Programmer", description: "Reach Level 5", icon: "🚀", requirement: 5 },
+            { id: 7, name: "D Master", description: "Complete all quests", icon: "👑", requirement: 15 },
+            { id: 8, name: "Week Warrior", description: "Maintain a 7-day streak", icon: "🔥", requirement: 7 }
+        ];
+
+        let gameState = {
+            xp: 0,
+            level: 1,
+            completedQuests: [],
+            unlockedAchievements: [],
+            streak: 0,
+            lastActive: null
+        };
+
+        // Load game state from localStorage
+        function loadGameState() {
+            const saved = localStorage.getItem('dGameState');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                updateStreak();
+            }
+        }
+
+        // Save game state to localStorage
+        function saveGameState() {
+            localStorage.setItem('dGameState', JSON.stringify(gameState));
+        }
+
+        // Update streak
+        function updateStreak() {
+            const today = new Date().toDateString();
+            if (gameState.lastActive !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (gameState.lastActive === yesterday.toDateString()) {
+                    gameState.streak++;
+                } else if (gameState.lastActive !== null) {
+                    gameState.streak = 1;
+                }
+                gameState.lastActive = today;
+                saveGameState();
+            }
+        }
+
+        // Calculate XP needed for level
+        function xpForLevel(level) {
+            return level * 500;
+        }
+
+        // Complete a quest
+        function completeQuest(questId) {
+            if (gameState.completedQuests.includes(questId)) return;
+            
+            const quest = quests.find(q => q.id === questId);
+            gameState.xp += quest.xp;
+            gameState.completedQuests.push(questId);
+            
+            updateStreak();
+            
+            // Check for level up
+            while (gameState.xp >= xpForLevel(gameState.level)) {
+                gameState.xp -= xpForLevel(gameState.level);
+                gameState.level++;
+                showCelebration(`🎉 Level Up!`, `You've reached Level ${gameState.level}! Keep up the amazing work!`);
+                checkAchievements();
+            }
+            
+            checkAchievements();
+            saveGameState();
+            updateUI();
+            
+            if (!gameState.level > quest.level) {
+                showCelebration(`✅ Quest Complete!`, `${quest.title} - Earned ${quest.xp} XP!`);
+            }
+        }
+
+        // Check and unlock achievements
+        function checkAchievements() {
+            achievements.forEach(achievement => {
+                if (!gameState.unlockedAchievements.includes(achievement.id)) {
+                    let unlock = false;
+                    
+                    if (achievement.requirement <= 7) { // Level achievements
+                        if (achievement.name.includes("Level") && gameState.level >= achievement.requirement) {
+                            unlock = true;
+                        } else if (achievement.name === "First Steps" && gameState.completedQuests.length >= 1) {
+                            unlock = true;
+                        } else if (achievement.name === "Quest Hunter" && gameState.completedQuests.length >= 5) {
+                            unlock = true;
+                        } else if (achievement.name === "Dedicated Learner" && gameState.completedQuests.length >= 10) {
+                            unlock = true;
+                        } else if (achievement.name === "D Master" && gameState.completedQuests.length >= 15) {
+                            unlock = true;
+                        } else if (achievement.name === "Week Warrior" && gameState.streak >= 7) {
+                            unlock = true;
+                        }
+                    }
+                    
+                    if (unlock) {
+                        gameState.unlockedAchievements.push(achievement.id);
+                        showCelebration(`🏆 Achievement Unlocked!`, `${achievement.icon} ${achievement.name}: ${achievement.description}`);
+                    }
+                }
+            });
+        }
+
+        // Show celebration modal
+        function showCelebration(title, text) {
+            document.getElementById('celebrationTitle').textContent = title;
+            document.getElementById('celebrationText').textContent = text;
+            document.getElementById('celebration').classList.remove('hidden');
+            document.getElementById('overlay').classList.remove('hidden');
+        }
+
+        // Close celebration modal
+        function closeCelebration() {
+            document.getElementById('celebration').classList.add('hidden');
+            document.getElementById('overlay').classList.add('hidden');
+        }
+
+        // Update UI
+        function updateUI() {
+            // Update stats
+            const xpNeeded = xpForLevel(gameState.level);
+            const xpPercent = (gameState.xp / xpNeeded) * 100;
+            
+            document.getElementById('xpValue').textContent = gameState.xp;
+            document.getElementById('xpProgress').style.width = xpPercent + '%';
+            document.getElementById('xpProgress').textContent = Math.round(xpPercent) + '%';
+            document.getElementById('questsComplete').textContent = gameState.completedQuests.length;
+            document.getElementById('achievementsUnlocked').textContent = gameState.unlockedAchievements.length;
+            document.getElementById('streakValue').textContent = gameState.streak;
+            document.getElementById('levelBadge').textContent = `Level ${gameState.level}`;
+            
+            // Update quests
+            const questsList = document.getElementById('questsList');
+            questsList.innerHTML = '';
+            
+            quests.forEach(quest => {
+                const isCompleted = gameState.completedQuests.includes(quest.id);
+                const isLocked = quest.level > gameState.level;
+                
+                const questDiv = document.createElement('div');
+                questDiv.className = 'quest-item' + (isCompleted ? ' completed' : '');
+                questDiv.innerHTML = `
+                    <div class="quest-title">${isCompleted ? '✅ ' : ''}${quest.title} ${isLocked ? '🔒' : ''}</div>
+                    <div class="quest-description">${quest.description}</div>
+                    <span class="quest-reward">+${quest.xp} XP</span>
+                    ${!isCompleted && !isLocked ? `<button class="quest-button" onclick="completeQuest(${quest.id})">Complete Quest</button>` : ''}
+                    ${isLocked ? `<p style="color: #999; font-size: 0.85em; margin-top: 10px;">🔒 Unlocks at Level ${quest.level}</p>` : ''}
+                `;
+                questsList.appendChild(questDiv);
+            });
+            
+            // Update achievements
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const isUnlocked = gameState.unlockedAchievements.includes(achievement.id);
+                const achievementDiv = document.createElement('div');
+                achievementDiv.className = 'achievement-item' + (isUnlocked ? '' : ' locked');
+                achievementDiv.innerHTML = `
+                    <div class="achievement-icon">${isUnlocked ? achievement.icon : '🔒'}</div>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${achievement.name}</div>
+                        <div class="achievement-desc">${achievement.description}</div>
+                    </div>
+                `;
+                achievementsList.appendChild(achievementDiv);
+            });
+        }
+
+        // Initialize
+        loadGameState();
+        updateUI();
+    </script>
+</body>
+</html>
